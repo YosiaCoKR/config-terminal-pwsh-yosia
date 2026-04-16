@@ -8,7 +8,7 @@ clear -x
 
 # --- 2. INITIALIZATION (Theme & Tools) ---
 if (Get-Command oh-my-posh -ErrorAction SilentlyContinue) {
-    oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\clean-detailed.omp.json" | Out-String | Invoke-Expression
+    oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\easy-term.omp.json" | Out-String | Invoke-Expression
 }
 if (Get-Command zoxide -ErrorAction SilentlyContinue) { 
     zoxide init powershell --hook pwd | Out-String | Invoke-Expression 
@@ -80,8 +80,8 @@ function gacp { param($msg) git add . ; git commit -m "$msg" ; git push }
 # --- 7. TROUBLESHOOTING & UTILITIES ---
 function kport {
     $proc = Get-NetTCPConnection -State Listen | 
-        Select-Object LocalPort, @{Name="ProcessName";Expression={(Get-Process -Id $_.OwningProcess).ProcessName}}, OwningProcess | 
-        Out-String -Stream | peco --prompt "Pilih Port yang mau di-KILL >"
+    Select-Object LocalPort, @{Name = "ProcessName"; Expression = { (Get-Process -Id $_.OwningProcess).ProcessName } }, OwningProcess | 
+    Out-String -Stream | peco --prompt "Pilih Port yang mau di-KILL >"
     if ($proc) {
         $pidToKill = ($proc.Trim() -split '\s+')[-1]
         Stop-Process -Id $pidToKill -Force
@@ -110,5 +110,9 @@ function clean-py { Get-ChildItem -Recurse -Filter "__pycache__" | Remove-Item -
 # --- 8. STARTUP DISPLAY ---
 if (Get-Command fastfetch -ErrorAction SilentlyContinue) { fastfetch }
 
-Write-Host "`nSelamat beraktivitas, Yosia! Saat ini jam $(Get-Date -Format 'HH:mm')" -ForegroundColor Cyan
-Write-Host "Terminal siap digunakan 🚀 (Coba ketik 'gs' buat tes!)`n" -ForegroundColor Gray
+$msg = " ❯ YOSIA @ TERMINAL | $(Get-Date -Format 'HH:mm') | READY 🚀 "
+$bar = "─" * ($msg.Length)
+
+Write-Host "`n$bar" -ForegroundColor DarkGray
+Write-Host $msg -ForegroundColor Cyan
+Write-Host "$bar`n" -ForegroundColor DarkGray
