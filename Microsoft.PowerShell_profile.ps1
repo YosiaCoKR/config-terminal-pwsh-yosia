@@ -1,26 +1,34 @@
 # =====================================================================
-#  🚀 YOSIA SIPAHUTAR - ULTIMATE CLEAN GIT CONFIG (FIXED)
+#  🚀 YOSIA SIPAHUTAR - ULTIMATE CLEAN GIT CONFIG (FINAL VERSION)
 # =====================================================================
 
 # --- 1. TAMPILAN & WINDOW ---
 $host.ui.RawUI.WindowTitle = "Yosiasp Terminal 🚀"
 clear -x
 
-# --- 2. INITIALIZATION (Theme & Tools) ---
-if (Get-Command oh-my-posh -ErrorAction SilentlyContinue) {
-    oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\easy-term.omp.json" | Out-String | Invoke-Expression
+# --- 2. MODUL (DI-LOAD DULUAN BIAR STABIL) ---
+Import-Module -Name Terminal-Icons -ErrorAction SilentlyContinue
+Import-Module -Name posh-git -ErrorAction SilentlyContinue
+Import-Module PSReadLine
+
+# --- 3. INITIALIZATION (Theme & Tools) ---
+# Jalur darurat jika VS Code tidak mendeteksi Oh My Posh
+$ompPath = "oh-my-posh"
+if (-not (Get-Command oh-my-posh -ErrorAction SilentlyContinue)) {
+    $ompPath = "$env:LOCALAPPDATA\Programs\oh-my-posh\bin\oh-my-posh.exe"
 }
+
+# Paksa eksekusi Oh My Posh
+if (Get-Command $ompPath -ErrorAction SilentlyContinue) {
+    & $ompPath init pwsh --config "$env:POSH_THEMES_PATH\easy-term.omp.json" | Out-String | Invoke-Expression
+}
+
 if (Get-Command zoxide -ErrorAction SilentlyContinue) { 
     zoxide init powershell --hook pwd | Out-String | Invoke-Expression 
 }
 if (Get-Command atuin -ErrorAction SilentlyContinue) { 
     atuin init powershell | Out-String | Invoke-Expression 
 }
-
-# --- 3. MODUL ---
-Import-Module -Name Terminal-Icons -ErrorAction SilentlyContinue
-Import-Module -Name posh-git -ErrorAction SilentlyContinue
-Import-Module PSReadLine
 
 # --- 4. PREDIKSI & HISTORY (PSReadLine) ---
 Set-PSReadLineOption -PredictionSource HistoryAndPlugin
@@ -41,18 +49,16 @@ Set-Alias ls ls-func
 Set-Alias ll ll-func
 Set-Alias cat cat-func
 
-# --- 6. GIT POWER-PACK (FIXED & BOLD) ---
-# Functions dasar agar bisa terima argumen dengan benar
+# --- 6. GIT POWER-PACK ---
 function ga-func { git add . }
 function gs-func { git status }
-function gc-func { param($msg) git commit -m "$msg" } # Pake param biar lebih stabil
+function gc-func { param($msg) git commit -m "$msg" }
 function gp-func { git push }
 function gl-func { git pull }
 function gb-func { git branch }
 function gco-func { param($branch) git checkout $branch }
 function gnb-func { param($branch) git checkout -b $branch }
 
-# Set Aliases Git
 Set-Alias ga ga-func
 Set-Alias gs gs-func
 Set-Alias gc gc-func
@@ -62,7 +68,6 @@ Set-Alias gb gb-func
 Set-Alias gco gco-func
 Set-Alias gnb gnb-func
 
-# Fungsi Tambahan (Reset, Diff, Stash)
 function gsh { git stash }                                         
 function gsp { git stash pop }                                     
 function gsl { git stash list }
@@ -72,9 +77,7 @@ function glog { git log --oneline --graph --all }
 function grv { git remote -v }
 function grs { param($file) git restore --staged $file }                
 function grh { git reset --hard HEAD }                             
-function guc { git reset --soft HEAD~1 }                           
-
-# Combo
+function guc { git reset --soft HEAD~1 }                            
 function gacp { param($msg) git add . ; git commit -m "$msg" ; git push }
 
 # --- 7. TROUBLESHOOTING & UTILITIES ---
