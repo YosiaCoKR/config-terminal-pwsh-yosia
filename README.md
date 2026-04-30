@@ -59,19 +59,27 @@ Untuk mendapatkan pengalaman maksimal, pastikan Anda telah menginstal _tools_ be
 
 ### Git Power-Pack
 
-| Alias                     | Perintah Asli                           | Deskripsi                         |
-| ------------------------- | --------------------------------------- | --------------------------------- |
-| `ga`                      | `git add .`                             | Menambahkan semua perubahan       |
-| `gs`                      | `git status`                            | Melihat status repository         |
-| `gc "Pesan"`              | `git commit -m "Pesan"`                 | Melakukan commit                  |
-| `gp`                      | `git push`                              | Mendorong perubahan ke remote     |
-| `gl`                      | `git pull`                              | Menarik perubahan dari remote     |
-| `gb`                      | `git branch`                            | Melihat daftar branch             |
-| `gco <branch>`            | `git checkout <branch>`                 | Berpindah branch                  |
-| `gnb <branch>`            | `git checkout -b <branch>`              | Membuat branch baru dan berpindah |
-| `glog`                    | `git log --oneline --graph --all`       | Melihat log git yang rapi         |
-| `gacp "Pesan"`            | `git add . ; git commit ... ; git push` | Add, Commit, dan Push sekaligus   |
-| _(dan masih banyak lagi)_ |
+| Alias                     | Perintah Asli                           | Deskripsi                                              |
+| ------------------------- | --------------------------------------- | ------------------------------------------------------ |
+| `ga`                      | `git add .`                             | Menambahkan semua perubahan                            |
+| `gs`                      | `git status`                            | Melihat status repository                              |
+| `gc "Pesan"`              | `git commit -m "Pesan"`                 | Melakukan commit                                       |
+| `gp`                      | `git push`                              | Mendorong perubahan ke remote                          |
+| `gl`                      | `git pull`                              | Menarik perubahan dari remote                          |
+| `gb`                      | `git branch`                            | Melihat daftar branch                                  |
+| `gco <branch>`            | `git checkout <branch>`                 | Berpindah branch                                       |
+| `gnb <branch>`            | `git checkout -b <branch>`              | Membuat branch baru dan berpindah                      |
+| `gsh`                     | `git stash`                             | Menyimpan perubahan sementara (stash)                  |
+| `gsp`                     | `git stash pop`                         | Mengambil dan menerapkan stash terakhir                |
+| `gsl`                     | `git stash list`                        | Melihat daftar stash                                   |
+| `gd`                      | `git diff`                              | Melihat perbedaan file yang belum di-stage             |
+| `gds`                     | `git diff --staged`                     | Melihat perbedaan file yang sudah di-stage             |
+| `glog`                    | `git log --oneline --graph --all`       | Melihat log git dalam bentuk grafis rapi               |
+| `grv`                     | `git remote -v`                         | Melihat daftar remote URL                              |
+| `grs <file>`              | `git restore --staged <file>`           | Membatalkan file dari staged area                      |
+| `grh`                     | `git reset --hard HEAD`                 | Reset keras ke commit terakhir (buang semua perubahan) |
+| `guc`                     | `git reset --soft HEAD~1`               | Membatalkan commit terakhir (perubahan tetap ada)      |
+| `gacp "Pesan"`            | `git add . ; git commit ... ; git push` | Add, Commit, dan Push sekaligus                        |
 
 ### Troubleshooting & Utility
 
