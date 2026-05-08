@@ -80,6 +80,14 @@ Untuk mendapatkan pengalaman maksimal, pastikan Anda telah menginstal _tools_ be
 | `grh`                     | `git reset --hard HEAD`                 | Reset keras ke commit terakhir (buang semua perubahan) |
 | `guc`                     | `git reset --soft HEAD~1`               | Membatalkan commit terakhir (perubahan tetap ada)      |
 | `gacp "Pesan"`            | `git add . ; git commit ... ; git push` | Add, Commit, dan Push sekaligus                        |
+| `gpu`                     | `git push -u origin HEAD`               | Push branch saat ini & set upstream ke origin          |
+| `gpo`                     | `git pull origin <branch>`              | Pull perubahan terbaru dari origin untuk branch aktif  |
+| `gwhere`                  | `git rev-parse ...; git status -sb`     | Menampilkan info nama branch dan status ringkas        |
+| `gsom`                    | `git checkout main; git pull`           | Pindah ke branch main dan pull pembaruan terakhir      |
+| `gnbm <branch>`           | `gsom; git checkout -b <branch>`        | Update main dan langsung buat branch baru dari sana    |
+| `gmain`                   | (Interaktif)                            | Pindah ke main, pull, dan merge dari branch sebelumnya |
+| `gclean`                  | `git branch -d ...`                     | Menghapus semua branch lokal yang sudah di-merge       |
+| `gbr`                     | `git branch -v` & `-rv`                 | Melihat informasi detail branch lokal dan remote       |
 
 ### Troubleshooting & Utility
 
