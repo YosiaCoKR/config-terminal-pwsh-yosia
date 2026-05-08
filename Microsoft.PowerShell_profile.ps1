@@ -12,13 +12,11 @@ Import-Module -Name posh-git -ErrorAction SilentlyContinue
 Import-Module PSReadLine
 
 # --- 3. INITIALIZATION (Theme & Tools) ---
-# Jalur darurat jika VS Code tidak mendeteksi Oh My Posh
 $ompPath = "oh-my-posh"
 if (-not (Get-Command oh-my-posh -ErrorAction SilentlyContinue)) {
     $ompPath = "$env:LOCALAPPDATA\Programs\oh-my-posh\bin\oh-my-posh.exe"
 }
 
-# Paksa eksekusi Oh My Posh
 if (Get-Command $ompPath -ErrorAction SilentlyContinue) {
     & $ompPath init pwsh --config "$env:POSH_THEMES_PATH\easy-term.omp.json" | Out-String | Invoke-Expression
 }
@@ -36,11 +34,9 @@ Set-PSReadLineOption -PredictionViewStyle ListView
 Set-PSReadLineKeyHandler -Key 'Ctrl+r' -Function HistorySearchBackward
 
 # --- 5. ALIAS & TOOLS (FORCE OVERWRITE) ---
-# Hapus alias bawaan Windows yang sering bentrok
 $systemAliases = @("ls", "dir", "cat", "gc", "ga", "gp", "gl", "gb", "gs")
 foreach ($a in $systemAliases) { if (Get-Alias $a -ErrorAction SilentlyContinue) { Remove-Item Alias:$a -Force } }
 
-# Alias Umum
 Set-Alias -Name sudo -Value gsudo -ErrorAction SilentlyContinue
 function ll-func { eza -l --icons --group-directories-first $args }
 function ls-func { eza --icons --group-directories-first $args }
@@ -49,11 +45,14 @@ Set-Alias ls ls-func
 Set-Alias ll ll-func
 Set-Alias cat cat-func
 
-# --- 6. GIT POWER-PACK ---
+# =====================================================================
+#  🌿 GIT CORE
+# =====================================================================
+
 function ga-func { git add . }
 function gs-func { git status }
 function gc-func { param($msg) git commit -m "$msg" }
-function gp-func { git push }
+function gp-func { git push -u origin HEAD }
 function gl-func { git pull }
 function gb-func { git branch }
 function gco-func { param($branch) git checkout $branch }
@@ -68,19 +67,77 @@ Set-Alias gb gb-func
 Set-Alias gco gco-func
 Set-Alias gnb gnb-func
 
-function gsh { git stash }                                         
-function gsp { git stash pop }                                     
-function gsl { git stash list }
-function gd { git diff }                                           
-function gds { git diff --staged }                                 
-function glog { git log --oneline --graph --all }                  
-function grv { git remote -v }
-function grs { param($file) git restore --staged $file }                
-function grh { git reset --hard HEAD }                             
-function guc { git reset --soft HEAD~1 }                            
+function gsh  { git stash }
+function gsp  { git stash pop }
+function gsl  { git stash list }
+function gd   { git diff }
+function gds  { git diff --staged }
+function glog { git log --oneline --graph --all }
+function grv  { git remote -v }
+function grs  { param($file) git restore --staged $file }
+function grh  { git reset --hard HEAD }
+function guc  { git reset --soft HEAD~1 }
 function gacp { param($msg) git add . ; git commit -m "$msg" ; git push }
 
-# --- 7. TROUBLESHOOTING & UTILITIES ---
+# =====================================================================
+#  🚀 GIT BRANCH POWER-PACK
+# =====================================================================
+
+function gpu {
+    $branch = git rev-parse --abbrev-ref HEAD
+    git push -u origin HEAD
+}
+
+function gpo {
+    $branch = git rev-parse --abbrev-ref HEAD
+    git pull origin $branch
+}
+
+function gwhere {
+    git rev-parse --abbrev-ref HEAD
+    git status -sb
+}
+
+function gsom {
+    git checkout main
+    git pull origin main
+}
+
+function gnbm {
+    param($branch)
+    if (-not $branch) { return }
+    git checkout main
+    git pull origin main
+    git checkout -b $branch
+}
+
+function gmain {
+    $branch = git rev-parse --abbrev-ref HEAD
+    if ($branch -eq "main") { return }
+    Write-Host "Merge '$branch' → main? (y/n): " -NoNewline
+    $confirm = Read-Host
+    if ($confirm -eq "y") {
+        git checkout main
+        git pull origin main
+        git merge $branch
+    }
+}
+
+function gclean {
+    git branch --merged main | Where-Object { $_ -notmatch '^\*|main|master' } | ForEach-Object {
+        git branch -d $_.Trim()
+    }
+}
+
+function gbr {
+    git branch -v
+    git branch -rv
+}
+
+# =====================================================================
+#  🔧 TROUBLESHOOTING & UTILITIES
+# =====================================================================
+
 function kport {
     $proc = Get-NetTCPConnection -State Listen | 
     Select-Object LocalPort, @{Name = "ProcessName"; Expression = { (Get-Process -Id $_.OwningProcess).ProcessName } }, OwningProcess | 
@@ -88,7 +145,6 @@ function kport {
     if ($proc) {
         $pidToKill = ($proc.Trim() -split '\s+')[-1]
         Stop-Process -Id $pidToKill -Force
-        Write-Host "🎯 Proses PID $pidToKill sukses dimatikan!" -ForegroundColor Green
     }
 }
 
@@ -97,21 +153,20 @@ function kill-pro {
         $procName = Get-Process | Select-Object -Property ProcessName -Unique | Out-String -Stream | peco --prompt "Matikan Proses >"
         if ($procName) {
             Stop-Process -Name $procName.Trim() -Force -ErrorAction SilentlyContinue
-            Write-Host "Selesai! '$($procName.Trim())' telah dimatikan. 🎯" -ForegroundColor Green
         }
     }
 }
 
 function f { if (Get-Command fzf -ErrorAction SilentlyContinue) { fzf --preview "bat --color=always --style=numbers --line-range=:500 {}" } }
 
-# Daily Misc
-function gold { curl -s rate.sx/XAU | Select-Object -First 15 }
-function cuaca { curl -s wttr.in/Jakarta?0pq }
-function copy { $input | clip }
+function gold     { curl -s rate.sx/XAU | Select-Object -First 15 }
+function cuaca    { curl -s wttr.in/Jakarta?0pq }
+function copy     { $input | clip }
 function clean-py { Get-ChildItem -Recurse -Filter "__pycache__" | Remove-Item -Recurse -Force }
 
-# --- 8. STARTUP DISPLAY ---
-if (Get-Command fastfetch -ErrorAction SilentlyContinue) { fastfetch }
+# =====================================================================
+#  📋 STARTUP DISPLAY
+# =====================================================================
 
 $msg = " ❯ YOSIA @ TERMINAL | $(Get-Date -Format 'HH:mm') | READY 🚀 "
 $bar = "─" * ($msg.Length)
